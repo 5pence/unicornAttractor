@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="feature m-2">
+    <div class="date">
+        Date created: {{ ticket.created_date }}
+        <span class="float-right text-uppercase">STATUS: {{ ticket.ticket_status}}</span>
+    </div>
+    <h2>{{ ticket.title }}</h2>
+    {% if ticket.ticket_type == 'feature' %}
+      <div class="up-vote">            
+              <a class="btn btn-success up-vote float-right" href="{% url 'ticket_vote' %}?id={{ ticket.id }}">I want to have this too</a>
+      </div>
+      <span><small>Money Raised: £{{ ticket.money_raised}}</small></span>
+    {% endif %}
+    {% if ticket.ticket_type == 'bug' %}
+      {% if voted %}
+        <p class="float-right">Already Voted For - Thanks</p>
+      {% else %}
+      <div class="up-vote">
+        <a class="btn btn-info float-right" href="{%  url 'ticket_vote' %}?id={{ ticket.id }}&next={{ request.get_full_path }}">I have this too</a>
+      </div>
+      {% endif %}
+    {% endif %}
+    <p>{{ ticket.text|linebreaksbr }}</p>                    
+</div>
+<div class="comments">
+  <p>Comments...</p>
+  {% for comment in comments %}
+  <div class="timeline-comment-wrapper">
+    <div class="timeline-comment">
+      <div class="timeline-comment-header">
+        <h3 class="timeline-comment-header-text"><strong>{{comment.user}}</strong><span class="text-small"> commented on {{comment.date_commented}}</span></h3>
+      </div>
+    <p class="pl-3">{{comment.comment}}</p>
+    </div>
+  </div>
+  {% endfor %}
+  <form method="POST" class="post-form" action="{{ request.get_full_path }}">{% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="save btn btn-default">Submit</button>
+  </form>
+</div>
+{% endblock %}

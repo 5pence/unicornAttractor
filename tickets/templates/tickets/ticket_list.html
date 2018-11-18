@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 col-md-6 border-right">
+            <h1>features</h1>
+            {% for ticket in features %}
+                <div class="feature m-2">
+                    <div class="date">
+                        {{ ticket.created_date }}
+                        <span class="float-right text-uppercase">STATUS: {{ ticket.ticket_status}}</span>                  
+                    </div>
+                    <div class="row">
+                        <div class="col-7">
+                        <h3><a href="{% url 'ticket_single' %}?id={{ ticket.id }}">{{ ticket.title }}</a></h3>
+                        </div>
+                        <div class="up-vote col-5">            
+                                <a class="btn btn-success up-vote float-right" href="{% url 'ticket_vote' %}?id={{ ticket.id }}">I want to have this too</a>
+                        </div>
+                    </div>
+                    <span><small>Money Raised: £{{ ticket.money_raised}}</small></span>
+                    <p>{{ ticket.text|linebreaksbr }}</p>                    
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <h1>bugs</h1>
+            {% for ticket, voted in bugs %}
+            <div class="feature m-2">
+                <div>
+                    <div class="date">
+                        {{ ticket.created_date }}
+                        <span class="float-right text-uppercase">STATUS: {{ ticket.ticket_status}}</span>
+                    </div>    
+                    <div class="row">
+                        <div class="col-8">   
+                            <h3><a href="{%  url 'ticket_single' %}?id={{ ticket.id }}">{{ ticket.title }}</a></h3>
+                        </div>
+                        <div class="col-4">
+                        {% if voted %}
+                            <button class="btn btn-info float-right" disabled>you voted, thanks</button>
+                        {% else %}
+                            <a class="btn btn-info float-right" href="{%  url 'ticket_vote' %}?id={{ ticket.id }}&next={{ request.get_full_path }}">I have this too</a>
+                        {% endif %}
+                        </div>
+                    </div>
+                    <p>{{ ticket.text|linebreaksbr }}</p>
+                    
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    </div>
+{% endblock %}
