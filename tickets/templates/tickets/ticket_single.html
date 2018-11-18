@@ -9,7 +9,7 @@
     <h2>{{ ticket.title }}</h2>
     {% if ticket.ticket_type == 'feature' %}
       <div class="up-vote">            
-          <form action="{% url 'ticket_donation' %}?id={{ ticket.id }}" method="POST"> {% csrf_token %}
+          <form action="{% url 'ticket_donation' %}?id={{ ticket.id }}&next={{ request.get_full_path }}" method="POST"> {% csrf_token %}
               <script
                   src="https://checkout.stripe.com/checkout.js" 
                   class="stripe-button"
@@ -38,7 +38,7 @@
     <p>{{ ticket.text|linebreaksbr }}</p>                    
 </div>
 <div class="comments">
-  <p>Comments...</p>
+  <p>Comments:</p>
   {% for comment in comments %}
   <div class="timeline-comment-wrapper">
     <div class="timeline-comment">

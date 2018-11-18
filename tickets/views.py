@@ -16,10 +16,14 @@ def post_ticket_list(request):
     return render(request, 'tickets/ticket_list.html', {'features': features, 'bugs': bugs, 'votes': vote_dict})
 
 def ticket_donation(request):
+    id = request.GET.get('id')
+    next = "ticket_single?id="+str(id)
+    if "next" in request.GET:
+        next =  request.GET.get('next')    
     ticket=Ticket.objects.get(id=request.GET.get('id'))
     ticket.money_raised += 20
     ticket.save()
-    return redirect('ticket_list')
+    return HttpResponseRedirect(next)
 
 def ticket_vote(request):
     id = request.GET.get('id')
