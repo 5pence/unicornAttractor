@@ -9,7 +9,20 @@
     <h2>{{ ticket.title }}</h2>
     {% if ticket.ticket_type == 'feature' %}
       <div class="up-vote">            
-              <a class="btn btn-success up-vote float-right" href="{% url 'ticket_vote' %}?id={{ ticket.id }}">I want to have this too</a>
+          <form action="{% url 'ticket_donation' %}?id={{ ticket.id }}" method="POST"> {% csrf_token %}
+              <script
+                  src="https://checkout.stripe.com/checkout.js" 
+                  class="stripe-button"
+                  data-key="pk_test_CfMP6UeifxOAmncHyvKRbLsk"
+                  data-amount="2000"
+                  data-name="Unicorn Attractor"
+                  data-description="Feature Donation"
+                  data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+                  data-locale="auto"
+                  data-label="I want to have this too"
+                  data-currency="gbp">
+              </script>
+          </form>  
       </div>
       <span><small>Money Raised: £{{ ticket.money_raised}}</small></span>
     {% endif %}

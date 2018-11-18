@@ -15,6 +15,11 @@ def post_ticket_list(request):
     bugs = [(b, b.id in vote_dict) for b in bugs]
     return render(request, 'tickets/ticket_list.html', {'features': features, 'bugs': bugs, 'votes': vote_dict})
 
+def ticket_donation(request):
+    ticket=Ticket.objects.get(id=request.GET.get('id'))
+    ticket.money_raised += 20
+    ticket.save()
+    return redirect('ticket_list')
 
 def ticket_vote(request):
     id = request.GET.get('id')
