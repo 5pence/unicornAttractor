@@ -1,11 +1,18 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, redirect
+"""
+This module handles the view functionality of everything in the
+pages that relate to tickets
+"""
+from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.utils import timezone
 from .models import Ticket, Vote, Comments
 from .form import CommentForm, TicketForm
 
 
 def post_ticket_list(request):
-    features = Ticket.objects.filter(created_date__lte=timezone.now(), ticket_type=Ticket.FEATURE).order_by('-money_raised')
+    """Gets the tickets, sorts and orders them ready for view"""
+    features = Ticket.objects.filter(
+        created_date__lte=timezone.now(),
+        ticket_type=Ticket.FEATURE).order_by('-money_raised')
     bugs = Ticket.objects.filter(created_date__lte=timezone.now(), ticket_type=Ticket.BUG)
     vote_dict = {}
     if request.user:
@@ -15,29 +22,44 @@ def post_ticket_list(request):
     bugs = [(b, b.id in vote_dict) for b in bugs]
     return render(request, 'tickets/ticket_list.html', {'features': features, 'bugs': bugs, 'votes': vote_dict})
 
+
 def ticket_donation(request):
-    id = request.GET.get('id')
-    next = "ticket_single?id="+str(id)
+    """
+    Increases money_raised of feature by 20 pounds
+    and redirects back to the same page
+    """
+    ticket_number = request.GET.get('id')
+    next_page = "ticket_single?id=" + str(ticket_number)
     if "next" in request.GET:
-        next =  request.GET.get('next')    
-    ticket=Ticket.objects.get(id=request.GET.get('id'))
+        next_page = request.GET.get('next')
+    ticket = Ticket.objects.get(id=request.GET.get('id'))
     ticket.money_raised += 20
     ticket.save()
-    return HttpResponseRedirect(next)
+    return HttpResponseRedirect(next_page)
+
 
 def ticket_vote(request):
-    id = request.GET.get('id')
-    next = "ticket_single?id="+str(id)
+    """
+    Increments vote count of bug and redirects back
+    to the same page
+    """
+    ticket_number = request.GET.get('id')
+    next_page = "ticket_single?id=" + str(ticket_number)
     if "next" in request.GET:
-        next =  request.GET.get('next')
-    bug = Ticket.objects.get(id=id)
+        next_page = request.GET.get('next')
+    bug = Ticket.objects.get(id=ticket_number)
     user = request.user
     vote = Vote(user=user, ticket=bug)
     vote.save()
-    return HttpResponseRedirect(next)
+    return HttpResponseRedirect(next_page)
+
 
 def ticket_single(request):
-    ticket=Ticket.objects.get(id=request.GET.get('id'))
+    """
+    Gets the single ticket and preps data for single ticket 
+    page. Also handles voting on single ticket page
+    """
+    ticket = Ticket.objects.get(id=request.GET.get('id'))
     form = CommentForm()
     try:
         vote = Vote.objects.get(ticket=ticket, user=request.user)
@@ -50,11 +72,21 @@ def ticket_single(request):
     comments_already_posted = Comments.objects.filter(ticket=ticket)
 
     is_voted_by_user = False
-    if(vote):
+    if vote:
         is_voted_by_user = True
-    return render(request, 'tickets/ticket_single.html', {'ticket': ticket, 'voted': is_voted_by_user, 'form':form, 'comments': comments_already_posted})
+    return render(
+        request, 'tickets/ticket_single.html', {
+            'ticket': ticket,
+            'voted': is_voted_by_user,
+            'form': form,
+            'comments': comments_already_posted})
+
 
 def ticket_create(request):
+    """
+    Ensures create ticket form is valid and pushes data into
+    a new ticket, then redirects to ticket list page
+    """
     if request.method == "POST":
         form = TicketForm(request.POST)
         if form.is_valid():
@@ -68,4 +100,3 @@ def ticket_create(request):
     else:
         form = TicketForm()
     return render(request, 'tickets/ticket_create.html', {'form': form})
-

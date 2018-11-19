@@ -1,9 +1,11 @@
+"""Model module for ticets and votes"""
 from django.db import models
 from django.utils import timezone
 from users.models import User
 
 
 class Ticket(models.Model):
+    """Model migration design for tickets"""
     TODO = 'todo'
     DOING = 'doing'
     DONE = 'done'
@@ -33,15 +35,18 @@ class Ticket(models.Model):
 
 
 class Vote(models.Model):
+    """Model migration design for votes"""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     date_voted = models.DateTimeField(default=timezone.now)
+
     class Meta:
-        unique_together = (('user', 'ticket'), )
+        unique_together = (('user', 'ticket'),)
+
 
 class Comments(models.Model):
+    """Model migration design for comments"""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     date_commented = models.DateTimeField(default=timezone.now)
     comment = models.CharField(max_length=2000, blank=False)
-        

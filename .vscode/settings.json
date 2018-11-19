@@ -1,4 +1,7 @@
 {
   "git.ignoreLimitWarning": true,
-  "python.pythonPath": "venv\\Scripts\\python.exe"
+  "python.pythonPath": "venv\\Scripts\\python.exe",
+  "editor.wordWrap": "on",
+  "editor.wordWrapColumn": 120,
+  "editor.fontSize": 16
 }
