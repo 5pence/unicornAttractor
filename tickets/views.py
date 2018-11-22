@@ -4,8 +4,10 @@ pages that relate to tickets
 """
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.utils import timezone
+from django.db.models import Count
 from .models import Ticket, Vote, Comments
 from .form import CommentForm, TicketForm
+from datetime import timedelta
 
 
 def post_ticket_list(request):
@@ -100,3 +102,161 @@ def ticket_create(request):
     else:
         form = TicketForm()
     return render(request, 'tickets/ticket_create.html', {'form': form})
+
+
+def ticket_graphs(request):
+    bug_done = Ticket.objects.filter(
+        completed_date__lte=timezone.now(),
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.DONE)
+    bug_count_done = bug_done.count()
+    bug_count_doing = Ticket.objects.filter(
+        created_date__lte=timezone.now(),
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.DOING).count()
+    bug_count_todo = Ticket.objects.filter(
+        created_date__lte=timezone.now(),
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.TODO).count()
+    feature_count_done = Ticket.objects.filter(
+        completed_date__lte=timezone.now(),
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.DONE).count()
+    feature_count_doing = Ticket.objects.filter(
+        created_date__lte=timezone.now(),
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.DOING).count()
+    feature_count_todo = Ticket.objects.filter(
+        created_date__lte=timezone.now(),
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.TODO).count()
+
+    one_day = timezone.now() - timedelta(days=1)
+    one_week = timezone.now() - timedelta(days=7)
+    one_month = timezone.now() - timedelta(days=30)
+
+    bug_count_done_day = Ticket.objects.filter(
+        completed_date__gte=one_day,
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.DONE).count()
+    bug_count_doing_day = Ticket.objects.filter(
+        created_date__gte=one_day,
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.DOING).count()
+    bug_count_todo_day = Ticket.objects.filter(
+        created_date__gte=one_day,
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.TODO).count()
+
+    bug_count_done_week = Ticket.objects.filter(
+        completed_date__gte=one_week,
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.DONE).count()
+    bug_count_doing_week = Ticket.objects.filter(
+        created_date__gte=one_week,
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.DOING).count()
+    bug_count_todo_week = Ticket.objects.filter(
+        created_date__gte=one_week,
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.TODO).count()
+
+    bug_count_done_month = Ticket.objects.filter(
+        completed_date__gte=one_month,
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.DONE).count()
+    bug_count_doing_month = Ticket.objects.filter(
+        created_date__gte=one_month,
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.DOING).count()
+    bug_count_todo_month = Ticket.objects.filter(
+        created_date__gte=one_month,
+        ticket_type=Ticket.BUG,
+        ticket_status=Ticket.TODO).count()
+
+    feature_count_done_day = Ticket.objects.filter(
+        completed_date__gte=one_day,
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.DONE).count()
+    feature_count_doing_day = Ticket.objects.filter(
+        created_date__gte=one_day,
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.DOING).count()
+    feature_count_todo_day = Ticket.objects.filter(
+        created_date__gte=one_day,
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.TODO).count()
+
+    feature_count_done_week = Ticket.objects.filter(
+        completed_date__gte=one_week,
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.DONE).count()
+    feature_count_doing_week = Ticket.objects.filter(
+        created_date__gte=one_week,
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.DOING).count()
+    feature_count_todo_week = Ticket.objects.filter(
+        created_date__gte=one_week,
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.TODO).count()
+
+    feature_count_done_month = Ticket.objects.filter(
+        completed_date__gte=one_month,
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.DONE).count()
+    feature_count_doing_month = Ticket.objects.filter(
+        created_date__gte=one_month,
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.DOING).count()
+    feature_count_todo_month = Ticket.objects.filter(
+        created_date__gte=one_month,
+        ticket_type=Ticket.FEATURE,
+        ticket_status=Ticket.TODO).count()
+    highest_paid_feature_ticket = Ticket.objects.filter(
+        created_date__lte=timezone.now(),
+        ticket_type=Ticket.FEATURE)
+
+    highest_paid_feature_name = ""
+    highest_paid_feature = 0
+    for feature in highest_paid_feature_ticket:
+        if feature.money_raised > highest_paid_feature:
+            highest_paid_feature = feature.money_raised
+            highest_paid_feature_name = feature
+
+    highest_voted_bug_name = ""
+    highest_voted_bug_count = 0
+    for bug in Ticket.objects.filter(ticket_type=Ticket.BUG).annotate(total_votes=Count('votes')):
+        if bug.total_votes > highest_voted_bug_count:
+            highest_voted_bug_count = bug.total_votes
+            highest_voted_bug_name = bug.title
+
+    return render(request, 'tickets/ticket_graph.html', {
+        'bug_count_done': bug_count_done,
+        'bug_count_doing': bug_count_doing,
+        'bug_count_todo': bug_count_todo,
+        'feature_count_done': feature_count_done,
+        'feature_count_doing': feature_count_doing,
+        'feature_count_todo': feature_count_todo,
+        'bug_count_done_day': bug_count_done_day,
+        'bug_count_doing_day': bug_count_doing_day,
+        'bug_count_todo_day': bug_count_todo_day,
+        'bug_count_done_week': bug_count_done_week,
+        'bug_count_doing_week': bug_count_doing_week,
+        'bug_count_todo_week': bug_count_todo_week,
+        'bug_count_done_month': bug_count_done_month,
+        'bug_count_doing_month': bug_count_doing_month,
+        'bug_count_todo_month': bug_count_todo_month,
+        'feature_count_done_day': feature_count_done_day,
+        'feature_count_doing_day': feature_count_doing_day,
+        'feature_count_todo_day': feature_count_todo_day,
+        'feature_count_done_week': feature_count_done_week,
+        'feature_count_doing_week': feature_count_doing_week,
+        'feature_count_todo_week': feature_count_todo_week,
+        'feature_count_done_month': feature_count_done_month,
+        'feature_count_doing_month': feature_count_doing_month,
+        'feature_count_todo_month': feature_count_todo_month,
+        'highest_paid_feature_name': highest_paid_feature_name,
+        'highest_paid_feature': highest_paid_feature,
+        'highest_voted_bug_count': highest_voted_bug_count,
+        'highest_voted_bug_name': highest_voted_bug_name
+    })

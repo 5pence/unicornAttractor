@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head_js %}
+<link rel="stylesheet" href="{% static 'highcharts/css/highcharts.css' %}">
+
+{% endblock head_js %}
+{% block content %}
+    <h1>Graphs</h1>
+
+        <div class="row">
+            <div class="col" id="task_feature_speedo" style="height: 300px;"></div>
+            <div class="col panel text-center">
+                <h2>Highest Paid Feature</h2>
+                <div class="border-top"></div>
+                <h3>{{ highest_paid_feature_name }}</h3>
+                <h3>£{{ highest_paid_feature }}</h3>
+                <hr>
+                <h2>Highest Voted Bug</h2>
+                <div class="border-top"></div>
+                <h3>{{ highest_voted_bug_name }}</h3>
+                <h3>{{ highest_voted_bug_count }} votes</h3>
+            </div>
+            <div class="col" id="task_bug_speedo"></div>
+
+        </div>
+        <div style="height: 20px;"></div>
+        <div id="task_bar_graph" style="width:100%; height:400px;"></div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script>
+        $(function () {
+
+            $('#task_feature_speedo').highcharts({
+                chart: {
+                    type: 'gauge'
+                },
+                title: {
+                    text: 'Features Done'
+                },
+                pane: {
+                    startAngle: -150,
+                    endAngle: 150,
+                    background: [{
+                        backgroundColor: {
+                            linearGradient: {x1: 0, y1: 0, x2: 0, y2: 1},
+                            stops: [
+                                [0, '#FFF'],
+                                [1, '#333']
+                            ]
+                        },
+                        borderWidth: 0,
+                        outerRadius: '109%'
+                    }, {
+                        backgroundColor: {
+                            linearGradient: {x1: 0, y1: 0, x2: 0, y2: 1},
+                            stops: [
+                                [0, '#333'],
+                                [1, '#FFF']
+                            ]
+                        },
+                        borderWidth: 1,
+                        outerRadius: '107%'
+                    }, {
+                        // default background
+                    }, {
+                        backgroundColor: '#DDD',
+                        borderWidth: 0,
+                        outerRadius: '105%',
+                        innerRadius: '103%'
+                    }]
+                },
+                yAxis: {
+                    min: 0,
+                    max: 200,
+                    minorTickInterval: 'auto',
+                    minorTickWidth: 1,
+                    minorTickLength: 10,
+                    minorTickPosition: 'inside',
+                    minorTickColor: '#666',
+
+                    tickPixelInterval: 30,
+                    tickWidth: 2,
+                    tickPosition: 'inside',
+                    tickLength: 10,
+                    tickColor: '#666',
+                    labels: {
+                        step: 2,
+                        rotation: 'auto'
+                    },
+                    title: {
+                        text: 'Progress'
+                    },
+                    plotBands: [{
+                        from: 0,
+                        to: 120,
+                        color: '#55BF3B' // green
+                    }, {
+                        from: 120,
+                        to: 160,
+                        color: '#DDDF0D' // yellow
+                    }, {
+                        from: 160,
+                        to: 200,
+                        color: '#DF5353' // red
+                    }]
+                },
+                series: [{
+                    name: 'Speed',
+                    data: [{{ feature_count_done }}],
+                    tooltip: {
+                        valueSuffix: 'Progress'
+                    }
+                }]
+            });
+
+            $('#task_bug_speedo').highcharts({
+                chart: {
+                    type: 'gauge'
+                },
+                title: {
+                    text: 'Bugs Done'
+                },
+                pane: {
+                    startAngle: -150,
+                    endAngle: 150,
+                    background: [{
+                        backgroundColor: {
+                            linearGradient: {x1: 0, y1: 0, x2: 0, y2: 1},
+                            stops: [
+                                [0, '#FFF'],
+                                [1, '#333']
+                            ]
+                        },
+                        borderWidth: 0,
+                        outerRadius: '109%'
+                    }, {
+                        backgroundColor: {
+                            linearGradient: {x1: 0, y1: 0, x2: 0, y2: 1},
+                            stops: [
+                                [0, '#333'],
+                                [1, '#FFF']
+                            ]
+                        },
+                        borderWidth: 1,
+                        outerRadius: '107%'
+                    }, {
+                        // default background
+                    }, {
+                        backgroundColor: '#DDD',
+                        borderWidth: 0,
+                        outerRadius: '105%',
+                        innerRadius: '103%'
+                    }]
+                },
+                yAxis: {
+                    min: 0,
+                    max: 200,
+                    minorTickInterval: 'auto',
+                    minorTickWidth: 1,
+                    minorTickLength: 10,
+                    minorTickPosition: 'inside',
+                    minorTickColor: '#666',
+
+                    tickPixelInterval: 30,
+                    tickWidth: 2,
+                    tickPosition: 'inside',
+                    tickLength: 10,
+                    tickColor: '#666',
+                    labels: {
+                        step: 2,
+                        rotation: 'auto'
+                    },
+                    title: {
+                        text: 'Progress'
+                    },
+                    plotBands: [{
+                        from: 0,
+                        to: 120,
+                        color: '#55BF3B' // green
+                    }, {
+                        from: 120,
+                        to: 160,
+                        color: '#DDDF0D' // yellow
+                    }, {
+                        from: 160,
+                        to: 200,
+                        color: '#DF5353' // red
+                    }]
+                },
+                series: [{
+                    name: 'Speed',
+                    data: [{{ bug_count_done }}],
+                    tooltip: {
+                        valueSuffix: 'Progress'
+                    }
+                }]
+            });
+
+            $('#task_bar_graph').highcharts({
+
+                chart: {
+                    type: 'bar'
+                },
+                title: {
+                    text: 'Ticket Statuses Stacked'
+                },
+                xAxis: {
+                    categories: ['Done', 'Doing', 'Todo']
+                },
+                yAxis: {
+                    title: {
+                        text: 'Tickets'
+                    }
+                },
+                legend: {
+                    reversed: true
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'normal'
+                    }
+                },
+                series: [{
+                    name: 'Features per Day',
+                    data: [{{ feature_count_done_day }},
+                        {{ feature_count_doing_day }},
+                        {{ feature_count_todo_day }}]
+                },{
+                    name: 'Features per Week',
+                    data: [
+                        {{ feature_count_done_week }},
+                        {{ feature_count_doing_week }},
+                        {{ feature_count_todo_week }}]
+                },{
+                    name: 'Features per Month',
+                    data: [
+                        {{ feature_count_done_month }},
+                        {{ feature_count_doing_month }},
+                        {{ feature_count_todo_month }}]
+                },{
+                    name: 'Bugs per Day',
+                    data: [{{ bug_count_done_day }},
+                        {{ bug_count_doing_day }},
+                        {{ bug_count_todo_day }}]
+                },{
+                    name: 'Bugs per Week',
+                    data: [
+                        {{ bug_count_done_week }},
+                        {{ bug_count_doing_week }},
+                        {{ bug_count_todo_week }}]
+                },{
+                    name: 'Bugs per Month',
+                    data: [
+                        {{ bug_count_done_month }},
+                        {{ bug_count_doing_month }},
+                        {{ bug_count_todo_month }}]
+                }]
+            });
+        });
+    </script>
+{% endblock extra_js %}
