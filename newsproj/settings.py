@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['unicorn-attractor.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'unicorn-attractor.herokuapp.com']
 
 
 # Application definition
@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'blog',
     'tickets',
     'transactions',
-    'users'
+    'users',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -110,10 +111,27 @@ USE_L10N = True
 
 USE_TZ = True
 
+AWS_S3_OBJECT_PARAMETERS = {
+    'Expires': 'Thu, 31 Dec 2099, 20:00:00 GMT',
+    'CacheControl': 'max-age=946008000',
+}
+
+AWS_STORAGE_BUCKET_NAME = 'the-magic-bucket'
+AWS_S3_REGION_NAME = 'eu-west-1'
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+STATICFILES_LOCATION = 'static'
+STATICFILES_STORAGE = 'custom_storages.StaticStorage'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'node_modules')]
+
+MEDIAFILES_LOCATION = 'media'
+DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
 
 STRIPE_PUBLISHABLE = os.getenv('STRIPE_PUBLISHABLE')
 STRIPE_SECRET = os.getenv('STRIPE_SECRET')
