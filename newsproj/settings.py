@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['unicorn-attractor.herokuapp.com/']
 
 
 # Application definition
@@ -77,13 +77,6 @@ LOGIN_REDIRECT_URL = ('../../tickets/')
 WSGI_APPLICATION = 'newsproj.wsgi.application'
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'newsspin',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'Barri8411!',
-    #     'HOST': 'localhost'
-    # }
     'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
 }
 
