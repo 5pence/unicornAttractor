@@ -29,7 +29,9 @@
         {% endif %}
         {% if ticket.ticket_type == 'bug' %}
             {% if voted %}
-                <p class="float-right">Already Voted For - Thanks</p>
+                <div class="up-vote">
+                    <a class="btn btn-info float-right text-white" disabled>you voted, thanks</a>
+                </div>
             {% else %}
                 <div class="up-vote">
                     <a class="btn btn-info float-right"

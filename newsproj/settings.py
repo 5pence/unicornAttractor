@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 import env
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '&m==)(%*n&d2r%**bm8jj!dxmnys_a)&4o+opwz%w(6klk9kly'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -76,13 +77,14 @@ LOGIN_REDIRECT_URL = ('../../tickets/')
 WSGI_APPLICATION = 'newsproj.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'newsspin',
-        'USER': 'postgres',
-        'PASSWORD': 'Barri8411!',
-        'HOST': 'localhost'
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'newsspin',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'Barri8411!',
+    #     'HOST': 'localhost'
+    # }
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
 }
 
 

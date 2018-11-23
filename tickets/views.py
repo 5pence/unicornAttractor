@@ -12,10 +12,14 @@ from datetime import timedelta
 
 def post_ticket_list(request):
     """Gets the tickets, sorts and orders them ready for view"""
-    features = Ticket.objects.filter(
+    all_features = Ticket.objects.filter(
         created_date__lte=timezone.now(),
         ticket_type=Ticket.FEATURE).order_by('-money_raised')
-    bugs = Ticket.objects.filter(created_date__lte=timezone.now(), ticket_type=Ticket.BUG)
+    features = all_features.exclude(ticket_status=Ticket.DONE)
+    all_bugs = Ticket.objects.filter(
+        created_date__lte=timezone.now(),
+        ticket_type=Ticket.BUG)
+    bugs = all_bugs.exclude(ticket_status=Ticket.DONE)
     vote_dict = {}
     if request.user:
         votes = Vote.objects.filter(user=request.user)
@@ -24,6 +28,17 @@ def post_ticket_list(request):
     bugs = [(b, b.id in vote_dict) for b in bugs]
     return render(request, 'tickets/ticket_list.html', {'features': features, 'bugs': bugs, 'votes': vote_dict})
 
+def post_ticket_completed(request):
+    """Gets the completed tickets, sorts and orders them ready for view"""
+    all_features = Ticket.objects.filter(
+        created_date__lte=timezone.now(),
+        ticket_status=Ticket.DONE,
+        ticket_type=Ticket.FEATURE).order_by('-completed_date')
+    all_bugs = Ticket.objects.filter(
+        created_date__lte=timezone.now(),
+        ticket_status=Ticket.DONE,
+        ticket_type=Ticket.BUG).order_by('-completed_date')
+    return render(request, 'tickets/ticket_completed.html', {'features': all_features, 'bugs': all_bugs})
 
 def ticket_donation(request):
     """

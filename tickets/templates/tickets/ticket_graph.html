@@ -21,6 +21,7 @@
             <div class="col" id="task_bug_speed"></div>
         </div>
         <div style="height: 20px;"></div>
+        <hr>
         <div id="task_bar_graph" style="width:100%; height:400px;"></div>
 {% endblock %}
 {% block extra_js %}
@@ -34,7 +35,7 @@
                     type: 'gauge'
                 },
                 title: {
-                    text: 'Features Done'
+                    text: 'Features Done Since Start'
                 },
                 pane: {
                     startAngle: -150,
@@ -70,18 +71,18 @@
                 },
                 yAxis: {
                     min: 0,
-                    max: 200,
+                    max: 40,
                     minorTickInterval: 'auto',
                     minorTickWidth: 1,
                     minorTickLength: 10,
                     minorTickPosition: 'inside',
-                    minorTickColor: '#666',
+                    minorTickColor: '#aaa',
 
                     tickPixelInterval: 30,
-                    tickWidth: 2,
+                    tickWidth: 3,
                     tickPosition: 'inside',
-                    tickLength: 10,
-                    tickColor: '#666',
+                    tickLength: 20,
+                    tickColor: '#aaa',
                     labels: {
                         step: 2,
                         rotation: 'auto'
@@ -91,23 +92,23 @@
                     },
                     plotBands: [{
                         from: 0,
-                        to: 120,
+                        to: 25,
                         color: '#55BF3B' // green
                     }, {
-                        from: 120,
-                        to: 160,
+                        from: 25,
+                        to: 35,
                         color: '#DDDF0D' // yellow
                     }, {
-                        from: 160,
-                        to: 200,
+                        from: 35,
+                        to: 40,
                         color: '#DF5353' // red
                     }]
                 },
                 series: [{
-                    name: 'Speed',
+                    name: 'Features Done',
                     data: [{{ feature_count_done }}],
                     tooltip: {
-                        valueSuffix: 'Progress'
+                        valueSuffix: ' so far'
                     }
                 }]
             });
@@ -117,7 +118,7 @@
                     type: 'gauge'
                 },
                 title: {
-                    text: 'Bugs Done'
+                    text: 'Bugs Done Since Start'
                 },
                 pane: {
                     startAngle: -150,
@@ -153,7 +154,7 @@
                 },
                 yAxis: {
                     min: 0,
-                    max: 200,
+                    max: 40,
                     minorTickInterval: 'auto',
                     minorTickWidth: 1,
                     minorTickLength: 10,
@@ -174,23 +175,24 @@
                     },
                     plotBands: [{
                         from: 0,
-                        to: 120,
-                        color: '#55BF3B' // green
+                        to: 25,
+                        color: '#55BF3B', // green
+                        zIndex: 2
                     }, {
-                        from: 120,
-                        to: 160,
+                        from: 25,
+                        to: 35,
                         color: '#DDDF0D' // yellow
                     }, {
-                        from: 160,
-                        to: 200,
+                        from: 35,
+                        to: 40,
                         color: '#DF5353' // red
                     }]
                 },
                 series: [{
-                    name: 'Speed',
+                    name: 'Bugs done ',
                     data: [{{ bug_count_done }}],
                     tooltip: {
-                        valueSuffix: 'Progress'
+                        valueSuffix: ' so far'
                     }
                 }]
             });
@@ -201,7 +203,7 @@
                     type: 'bar'
                 },
                 title: {
-                    text: 'Ticket Statuses Stacked'
+                    text: 'Stacks of Recent Ticket Statuses'
                 },
                 xAxis: {
                     categories: ['Done', 'Doing', 'Todo']
