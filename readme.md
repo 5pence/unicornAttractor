@@ -32,6 +32,21 @@ Website was coded initially in VSCode and after spending a month trying that env
 
 ##### Testing
 
-The apps inside the project do have some basic testing functions that I ran whilst building it. Upon it being live I asked people on the Code Institute's Slack channels to test it and provide feedback. I received positive feedback with only an indication that I may want to change the layout to use container instead of container-fluid. I did try that but I prefer the full width of container-fluid so I kept it like that.   
-As all the forms have been extended from Django's models all the validation is built in. 
+The apps inside the project do have some basic testing functions that I ran whilst building it. I started off by testing the model creation functions. 
+
+Upon checking those I ran tests that checked the business logic of my views. 
+
+The ticket app was tested by using Django's Test Client class. I tested registration forms password mismatching, checking successful registering redirected the user. 
+
+I also checked for ticket creation and voting, the business logic that stops a user from voting for the same ticket twice. I also tested a ticket being voted for twice (once by two different users) and this highest ticket bug showing on the graph page. 
+
+I tested the business logic of the ticket create page: once entering no data into the form that validation messages would be returned. I also tested that upon entering successfully the ticket was created and user was redirected to the tickets page with the new ticket present on the tickets page.
+
+It is impossible to test at 100% coverage so I followed the Pareto principle (80/20 rule) which I believe I achieved. Most of my testing is done in the Tickets's app tests.py while other tests are present in the Users app tests.py
+
+Upon it being live I asked people on the Code Institute's Slack channels to test it and provide feedback. I received positive feedback with only an indication that I may want to change the layout to use container instead of container-fluid. I did try that but I prefer the full width of container-fluid so I kept it like that.   
+
+I concentrated on logic and functionality with the project, I have no desire to be a designer! That said I kept my design to be usable and simple to navigate with readable font faces and breathable spacing (i.e. negative space).  
+
+As the site is built with a responsive design it works for mobiles and I have checked it on iPhones 6 to X, Samsung Galaxys, iPads (mini to pro), Google's Pixel 2 and 3. I also tested it on various browsers. 
 
